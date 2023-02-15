@@ -61,7 +61,7 @@ public class Editor {
             finished = processCommand(command);
         }
         System.out.println("Thank you for using Fotoshop.  Good bye.");
-        System.exit(0);
+        //System.exit(0);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Editor {
     private boolean processCommand(Command command) {
         boolean wantToQuit = false;
 
-        if (command.isUnknown()) {
+        /*if (command.isUnknown()) {
             System.out.println("I don't know what you mean...");
             return false;
         }
@@ -121,7 +121,43 @@ public class Editor {
             wantToQuit = script(command);
         } else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
+        }*/
+
+        // new switch case for the lookup table created
+        /*
+        if (command.isUnknown()) {
+            System.out.println("Unrecognised command");
+            return false;
         }
+
+        String commandWord = command.getCommandWord();
+        switch (commandWord) {
+            case "help":
+                printHelp();
+                break;
+            case "open":
+                open(command);
+                break;
+            case "save":
+                save(command);
+                break;
+            case "mono":
+                mono(command);
+                break;
+            case "rot90":
+                rot90(command);
+                break;
+            case "look":
+                look(command);
+                break;
+            case "script":
+                wantToQuit = script(command);
+                break;
+            case "quit":
+                wantToQuit = quit(command);
+                break;
+        }
+        return wantToQuit;*/
         return wantToQuit;
     }
 
@@ -162,7 +198,7 @@ public class Editor {
      * and use as the current image. 
      * @param command the command given.
      */
-    private void open(Command command) {
+    /*private void open(Command command) {
         if (!command.hasSecondWord()) {
             // if there is no second word, we don't know what to open...
             System.out.println("open what?");
@@ -182,14 +218,14 @@ public class Editor {
             filter4 = null;
             System.out.println("Loaded " + name);
         }
-    }
+    }*/
 
     /**
      * "save" was entered. Save the current image to the file given as the 
      * second word of the command. 
      * @param command the command given
      */
-    private void save(Command command) {
+    /*private void save(Command command) {
         if (currentImage == null) {
             printHelp();
             return;
@@ -209,7 +245,7 @@ public class Editor {
             System.out.println(e.getMessage());
             printHelp();
         }
-    }
+    }*/
     
     /**
      * Check the status of the application 
@@ -328,7 +364,9 @@ public class Editor {
      * the script file.
      * @return whether to quit.
      */
-    private boolean script(Command command) {
+
+    /*
+    private boolean script(Command command) throws RuntimeException {
         if (!command.hasSecondWord()) {
             // if there is no second word, we don't know what to open...
             System.out.println("which script"); 
@@ -358,13 +396,13 @@ public class Editor {
             throw new RuntimeException("Panic: script barfed!");
         }
     }
-    
+    */
     /**
      * "Quit" was entered. Check the rest of the command to see whether we
      * really quit the editor.
      * @param command the command given.
      * @return true, if this command quits the editor, false otherwise.
-     */
+     *//*
     private boolean quit(Command command) {
         if (command.hasSecondWord()) {
             System.out.println("Quit what?");
@@ -372,5 +410,5 @@ public class Editor {
         } else {
             return true;  // signal that we want to quit
         }
-    }
+    }*/
 }
