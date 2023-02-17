@@ -1,84 +1,103 @@
-import java.awt.*;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-// The Command interface defines the basic execute() method that all commands will implement.
-interface Command {
-    void execute();
+public interface Command<T> {
+    public ColorImage execute(String name);
 }
 
-// First Command - rot90
-class rot90 implements Command {
 
-    public ColorImage rot90(ColorImage currentImage, ArrayList<String> filter){
-        int height = currentImage.getHeight();
-        int width = currentImage.getWidth();
-        ColorImage rotImage = new ColorImage(height, width);
-        for (int y=0; y<height; y++) { // in the rotated image
-            for (int x=0; x<width; x++) {
-                Color pix = currentImage.getPixel(x,y);
-                rotImage.setPixel(height-y-1,x, pix);
-            }
+
+class MonoCommand implements Command {
+    private ColorImage picture;
+
+    public MonoCommand(ColorImage picture) {
+        this.picture = picture;
+    }
+
+    public ColorImage execute(String name) {
+        //picture
+        return null;
+    }
+}
+
+class RotateCommand implements Command {
+    private ColorImage picture;
+
+    public RotateCommand(ColorImage picture) {
+        this.picture = picture;
+    }
+
+    public ColorImage execute(String name) {
+        //picture
+        return null;
+    }
+}
+
+class LoadCommand implements Command {
+    private ColorImage picture;
+    private String name;
+
+    public LoadCommand() {
+        //this.picture = picture;
+        //this.name = name;
+    }
+
+    public ColorImage execute(String name) {
+        try {
+            picture = new ColorImage(ImageIO.read(new File(name)));
+        } catch (IOException e) {
+            System.out.println("Cannot find image file, " + name);
+            System.out.println("cwd is " + System.getProperty("user.dir"));
         }
-        filter.add("rot90");
-        return rotImage;
-    }
-    @Override
-    public void execute() {
-        System.out.println("Rotation is successful");
+        return picture;
     }
 }
 
-// Second Command - mono
-class mono implements Command {
-
-    public ColorImage mono(ColorImage currentImage, ArrayList<String> filter) {
-        ColorImage tmpImage = new ColorImage(currentImage);
-        //Graphics2D g2 = currentImage.createGraphics();
-        int height = tmpImage.getHeight();
-        int width = tmpImage.getWidth();
-        for (int y=0; y<height; y++) {
-            for (int x=0; x<width; x++) {
-                Color pix = tmpImage.getPixel(x, y);
-                int lum = (int) Math.round(0.299*pix.getRed()
-                        + 0.587*pix.getGreen()
-                        + 0.114*pix.getBlue());
-                tmpImage.setPixel(x, y, new Color(lum, lum, lum));
-            }
-        }
-        filter.add("mono");
-        return tmpImage;
-    }
-    @Override
-    public void execute() {
-        System.out.println("Mono successful");
-    }
-}
-
-// The Invoker class is responsible for executing commands. It contains a reference to the command object and
-// calls the execute() method when it needs to perform an action.
 class Invoker {
     private Command command;
+    private List<Command> executedCommands;
+
+    Invoker() {
+        this.executedCommands = new ArrayList<Command>();
+    }
 
     public void setCommand(Command command) {
         this.command = command;
     }
 
-    public void executeCommand() {
-        command.execute();
+    public ColorImage runCommand(String name) {
+        executedCommands.add(command);
+        return command.execute(name);
+    }
+
+    public void printExecutedCommands() {
+        System.out.println("Executed Commands:");
+        for (Command command : executedCommands) {
+            System.out.println("- " + command.getClass().getSimpleName());
+        }
     }
 }
-
-// The Client class is responsible for creating commands and configuring the invoker to use them.
-class Client {
+class Editor {
     public static void main(String[] args) {
+        ColorImage currImg = null;
+        Command mono = new MonoCommand(currImg);
+        Command rot90 = new RotateCommand(currImg);
+        Command open = new LoadCommand();
+
         Invoker invoker = new Invoker();
-        Command command1 = new rot90();
-        Command command2 = new mono();
 
-        invoker.setCommand(command1);
-        invoker.executeCommand();
+        invoker.setCommand(mono);
+        currImg = invoker.runCommand(null); // Mono applied
 
-        invoker.setCommand(command2);
-        invoker.executeCommand();
+        invoker.setCommand(rot90);
+        currImg = invoker.runCommand(null); // Rot applied
+
+        invoker.printExecutedCommands(); // Script command
+
+        invoker.setCommand(open);
+        currImg = invoker.runCommand("FileName"); // Opened the file with the set name
     }
 }
